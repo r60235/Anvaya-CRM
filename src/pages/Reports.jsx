@@ -27,8 +27,8 @@ ChartJS.register(
  
 const Reports = () => {
   const [reportData, setReportData] = useState({
-    lastWeek: [],
-    pipeline: null,
+    closedCount: 0,
+    pipelineCount: 0,
     closedByAgent: [],
     statusDistribution: []
   });
@@ -44,9 +44,7 @@ const Reports = () => {
       setLoading(true);
       setError(null);
       
-      const [lastWeek, pipeline, closedByAgent, allLeads] = await Promise.all([
-        reportsAPI.getLastWeek().catch(() => []),
-        reportsAPI.getPipeline().catch(() => ({ totalLeadsInPipeline: 0 })),
+      const [closedByAgent, allLeads] = await Promise.all([
         reportsAPI.getClosedByAgent().catch(() => []),
         leadsAPI.getAll().catch(() => [])
       ]);
@@ -57,12 +55,13 @@ const Reports = () => {
         count: allLeads.filter(lead => lead.status === status).length
       }));
 
-      // Calculate pipeline count (all leads that are NOT closed)
+      // Calculate closed and pipeline counts
+      const closedCount = allLeads.filter(lead => lead.status === 'Closed').length;
       const pipelineCount = allLeads.filter(lead => lead.status !== 'Closed').length;
 
       setReportData({
-        lastWeek: Array.isArray(lastWeek) ? lastWeek : [],
-        pipeline: pipelineCount, // Use calculated count
+        closedCount,
+        pipelineCount,
         closedByAgent: Array.isArray(closedByAgent) ? closedByAgent : [],
         statusDistribution: statusDistribution
       });
@@ -81,28 +80,34 @@ const Reports = () => {
     return <ErrorMessage message={error} onRetry={loadReports} type="banner" />;
   }
 
-  const lastWeekChartData = {
-    labels: reportData.lastWeek.map(lead => lead.name || 'Unknown'),
+  // Closed vs Pipeline Pie Chart
+  const closedVsPipelineData = {
+    labels: ['Closed', 'In Pipeline'],
     datasets: [
       {
-        label: 'Leads Closed',
-        data: reportData.lastWeek.map((_, index) => 1),
-        backgroundColor: '#3b82f6',
+        label: 'Leads',
+        data: [reportData.closedCount, reportData.pipelineCount],
+        backgroundColor: ['#10b981', '#3b82f6'],
+        borderWidth: 2,
+        borderColor: '#fff',
       },
     ],
   };
 
+  // Closed by Agent Bar Chart
   const closedByAgentData = {
     labels: reportData.closedByAgent.map(item => item.agentName || 'Unknown'),
     datasets: [
       {
         label: 'Closed Leads',
         data: reportData.closedByAgent.map(item => item.closedCount || 0),
-        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+        backgroundColor: '#3b82f6',
+        borderRadius: 6,
       },
     ],
   };
 
+  // Status Distribution Bar Chart
   const statusDistributionData = {
     labels: reportData.statusDistribution.map(item => item.status || 'Unknown'),
     datasets: [
@@ -110,6 +115,7 @@ const Reports = () => {
         label: 'Leads',
         data: reportData.statusDistribution.map(item => item.count || 0),
         backgroundColor: reportData.statusDistribution.map(item => STATUS_COLORS[item.status] || '#6b7280'),
+        borderRadius: 6,
       },
     ],
   };
@@ -121,49 +127,69 @@ const Reports = () => {
       </div>
 
       <div className="reports-grid">
-        {/* Pipeline Metric */}
-        <div className="report-card metric-card">
-          <h3>Total Leads in Pipeline</h3>
-          <div className="metric-value">
-            {typeof reportData.pipeline === 'number' 
-              ? reportData.pipeline 
-              : reportData.pipeline?.totalLeadsInPipeline || 0}
+        {/* Total Leads Closed and in Pipeline - Pie Chart */}
+        <div className="report-card chart-card">
+          <h3>Total Leads: Closed and in Pipeline</h3>
+          <div className="chart-wrapper">
+            <Pie 
+              data={closedVsPipelineData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                  legend: {
+                    position: 'bottom',
+                    labels: {
+                      padding: 15,
+                      font: {
+                        size: 12,
+                      },
+                    },
+                  },
+                  tooltip: {
+                    callbacks: {
+                      label: function(context) {
+                        const label = context.label || '';
+                        const value = context.parsed || 0;
+                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                        return `${label}: ${value} (${percentage}%)`;
+                      }
+                    }
+                  }
+                },
+              }}
+            />
           </div>
-          <p className="metric-label">Active Leads</p>
         </div>
 
-        {/* Last Week Chart */}
-        {reportData.lastWeek.length > 0 && (
-          <div className="report-card chart-card">
-            <h3>Leads Closed Last Week</h3>
-            <div className="chart-wrapper">
-              <Bar 
-                data={lastWeekChartData} 
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: true,
-                  plugins: {
-                    legend: { display: false },
-                  },
-                }}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Closed by Agent Chart */}
+        {/* Leads Closed by Sales Agent - Bar Chart */}
         {reportData.closedByAgent.length > 0 && (
           <div className="report-card chart-card">
-            <h3>Closed Leads by Agent</h3>
+            <h3>Leads Closed by Sales Agent</h3>
             <div className="chart-wrapper">
               <Bar 
                 data={closedByAgentData}
                 options={{
                   responsive: true,
                   maintainAspectRatio: true,
-                  indexAxis: 'y',
                   plugins: {
                     legend: { display: false },
+                    tooltip: {
+                      callbacks: {
+                        label: function(context) {
+                          return `Closed: ${context.parsed.y} leads`;
+                        }
+                      }
+                    }
+                  },
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      ticks: {
+                        stepSize: 1,
+                      },
+                    },
                   },
                 }}
               />
@@ -171,19 +197,32 @@ const Reports = () => {
           </div>
         )}
 
-        {/* Status Distribution Chart */}
+        {/* Lead Status Distribution - Bar Chart */}
         {reportData.statusDistribution.length > 0 && (
           <div className="report-card chart-card">
             <h3>Lead Status Distribution</h3>
             <div className="chart-wrapper">
-              <Pie 
+              <Bar 
                 data={statusDistributionData}
                 options={{
                   responsive: true,
                   maintainAspectRatio: true,
                   plugins: {
-                    legend: {
-                      position: 'bottom',
+                    legend: { display: false },
+                    tooltip: {
+                      callbacks: {
+                        label: function(context) {
+                          return `${context.label}: ${context.parsed.y} leads`;
+                        }
+                      }
+                    }
+                  },
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      ticks: {
+                        stepSize: 1,
+                      },
                     },
                   },
                 }}
