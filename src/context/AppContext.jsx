@@ -88,7 +88,7 @@ export const AppProvider = ({ children }) => {
   const addAgent = async (agentData) => {
     try {
       const newAgent = await agentsAPI.create(agentData);
-      setAgents(prev => [...prev, newAgent]);
+      setAgents(prev => [newAgent, ...prev]);
       addNotification('Sales agent added successfully', NOTIFICATION_TYPES.SUCCESS);
       return newAgent;
     } catch (error) {

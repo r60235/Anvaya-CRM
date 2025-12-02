@@ -9,7 +9,7 @@ export const useAgents = () => {
   const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { addNotification } = useApp();
+  const { addNotification, addAgent: addAgentToContext, fetchAgents: fetchAgentsFromContext } = useApp();
 
   // Fetch all agents
   const fetchAgents = async () => {
@@ -36,14 +36,13 @@ export const useAgents = () => {
     setError(null);
     
     try {
-      const newAgent = await agentsAPI.create(agentData);
+      // Use AppContext's addAgent to update global state
+      const newAgent = await addAgentToContext(agentData);
       setAgents(prev => [...prev, newAgent]);
-      addNotification('Sales agent created successfully', NOTIFICATION_TYPES.SUCCESS);
       return newAgent;
     } catch (err) {
       const errorMessage = err.normalized?.message || 'Failed to create agent';
       setError(errorMessage);
-      addNotification(errorMessage, NOTIFICATION_TYPES.ERROR);
       throw err;
     } finally {
       setLoading(false);
