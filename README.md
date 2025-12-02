@@ -108,46 +108,11 @@ anvaya-frontend/
 - Node.js (v16 or higher)
 - npm or yarn
 - MongoDB instance running
-- Backend API running at `http://localhost:5001/api`
+- Backend API running at `https://anvaya-backend-nu.vercel.app/api`
 
 ### Installation
 
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd anvaya-frontend
-```
 
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Configure API endpoint (if different from default):
-   - Edit `src/utils/constants.js`
-   - Update `API_BASE_URL` to your backend URL
-
-4. Start the development server:
-```bash
-npm run dev
-```
-
-5. Open your browser and navigate to:
-```
-http://localhost:5173
-```
-
-### Build for Production
-
-```bash
-npm run build
-```
-
-The production-ready files will be in the `dist/` directory.
-
-## API Configuration
-
-The frontend expects the backend API to be running at `http://localhost:5001/api` by default.
 
 ### API Endpoints Used:
 - `GET /leads` - Fetch all leads (with optional filters)
@@ -165,8 +130,6 @@ The frontend expects the backend API to be running at `http://localhost:5001/api
 - `GET /report/pipeline` - Pipeline statistics
 - `GET /report/closed-by-agent` - Closed leads by agent
 
-**Note**: Status distribution is calculated client-side from all leads data.
-
 ## Features in Detail
 
 ### URL-Based Filtering
@@ -176,17 +139,16 @@ Share filtered views with team members using URL parameters:
 - `/leads?status=Qualified&priority=High` - Combine multiple filters
 
 ### Lead Status Pipeline
-Leads progress through defined stages:
-1. **New** - Freshly created lead
-2. **Contacted** - Initial contact made
-3. **Qualified** - Lead meets criteria
-4. **Proposal Sent** - Proposal submitted
-5. **Closed** - Deal won or lost
+1. **New** 
+2. **Contacted** 
+3. **Qualified** 
+4. **Proposal Sent** 
+5. **Closed** 
 
 ### Priority Levels
-- **High** - Urgent, high-value opportunities
-- **Medium** - Standard priority
-- **Low** - Long-term or low-value leads
+- **High** 
+- **Medium** 
+- **Low**
 
 ### Lead Sources
 Track where leads originate:
@@ -196,46 +158,6 @@ Track where leads originate:
 - Advertisement
 - Email
 - Other
-
-## Development
-
-### Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-
-### Code Style
-- ES6+ JavaScript
-- Functional React components with hooks
-- CSS modules for styling
-- Consistent naming conventions
-
-## Browser Support
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-
-## Responsive Design
-The application is fully responsive and works on:
-- Desktop (> 1024px)
-- Tablet (768px - 1024px)
-- Mobile (< 768px)
-
-## Contributing
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-## License
-This project is licensed under the MIT License.
-
-## Support
-For issues and questions, please create an issue in the repository.
 
 ## Acknowledgments
 - Built with React and Vite
