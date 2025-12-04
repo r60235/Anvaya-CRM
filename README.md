@@ -1,165 +1,247 @@
-# Anvaya CRM - Sales Lead Management System
+# Anvaya CRM
 
-A comprehensive MERN stack CRM application for managing sales leads, tracking progress, and generating reports.
+A full-stack CRM application for managing sales leads, tracking progress through the sales pipeline, and generating insightful reports. Built with a React frontend, Express/Node backend, MongoDB database, and featuring real-time updates.
+
+---
+
+## Demo Link
+
+[Live Demo](https://anvaya-frontend-kappa.vercel.app)
+
+---
+
+## Quick Start
+
+```bash
+git clone https://github.com/r60235/anvaya-frontend.git
+cd anvaya-frontend
+npm install
+npm run dev
+```
+
+## Technologies
+
+- React 19.2.0
+- React Router DOM 7.9.6
+- Vite 7.2.4
+- Chart.js 4.5.1
+- Axios 1.13.2
+- Node.js
+- Express.js
+- MongoDB
+
+## Demo Video
+
+Watch a walkthrough of all major features of this app:
+
+[Explaination Video Link](https://drive.google.com/file/d/1a4oWpPyGhCf5WTYMGV6uyKK4qmhumV9Z/view?usp=drive_link)
 
 ## Features
 
-### Lead Management
-- ✅ Create, read, update, and delete leads
-- ✅ Assign leads to sales agents
-- ✅ Track lead status through sales pipeline (New → Contacted → Qualified → Proposal Sent → Closed)
-- ✅ Set priority levels (High, Medium, Low)
-- ✅ Estimate time to close
-- ✅ Categorize with custom tags
-- ✅ Track lead sources (Website, Referral, Cold Call, etc.)
+**Dashboard**
+- Overview of total leads, pipeline status, and closed deals
+- Quick access to recent leads and common actions
+- Status distribution visualization
 
-### Comments & Collaboration
-- ✅ Add comments to leads for progress tracking
-- ✅ View comment history with timestamps and authors
-- ✅ Real-time comment updates
+**Lead Management**
+- Create, view, edit, and delete leads
+- Assign leads to sales agents
+- Track lead status (New → Contacted → Qualified → Proposal Sent → Closed)
+- Set priority levels (High, Medium, Low)
+- Estimate time to close
+- Add custom tags for categorization
 
-### Filtering & Organization
-- ✅ URL-based filtering for easy sharing
-- ✅ Filter by sales agent, status, source, and tags
-- ✅ Sort by priority, time to close, or creation date
-- ✅ View leads grouped by status (Kanban-style)
-- ✅ View leads grouped by sales agent
+**Lead Views**
+- List view with filtering and sorting
+- Status view (Kanban-style columns)
+- Agent view (grouped by sales agent)
+- Filter by sales agent, status, and priority
+- Sort by time to close, priority, or creation date
 
-### Reports & Analytics
-- ✅ Dashboard with key metrics
-- ✅ Leads closed last week visualization
-- ✅ Pipeline overview
-- ✅ Closed leads by agent (bar chart)
-- ✅ Lead status distribution (pie chart)
-- ✅ Interactive Chart.js visualizations
+**Comments & Collaboration**
+- Add comments to leads for progress tracking
+- View comment history with timestamps and authors
 
-### Sales Agent Management
-- ✅ Add and manage sales agents
-- ✅ Assign leads to agents
-- ✅ Track agent workload and performance
+**Reports & Analytics**
+- Total leads: Closed vs In Pipeline (Pie Chart)
+- Leads closed by sales agent (Bar Chart)
+- Lead status distribution (Bar Chart)
+- Responsive charts powered by Chart.js
 
-## Tech Stack
+**Sales Agent Management**
+- Add and manage sales agents
+- View agent workload and performance
+- Assign/reassign leads to agents
 
-### Frontend
-- **React 19.2.0** - UI library
-- **React Router DOM 7.9.6** - Client-side routing
-- **Axios 1.13.2** - HTTP client
-- **Chart.js 4.5.1** - Data visualization
-- **react-chartjs-2 5.3.1** - React wrapper for Chart.js
-- **Vite 7.2.4** - Build tool and dev server
+## API Reference
 
-### Backend
-- **Node.js** - Runtime environment
-- **Express.js** - Web framework
-- **MongoDB** - Database
-- **Mongoose** - ODM for MongoDB
+### **GET /api/leads**
+<br>
+List all leads with optional filtering
+<br>
+Sample Response:
+<br>
 
-## Project Structure
-
-```
-anvaya-frontend/
-├── src/
-│   ├── components/          # Reusable UI components
-│   │   ├── CommentSection.jsx
-│   │   ├── ErrorMessage.jsx
-│   │   ├── FilterBar.jsx
-│   │   ├── Layout.jsx
-│   │   ├── LeadCard.jsx
-│   │   ├── LeadForm.jsx
-│   │   ├── LoadingSpinner.jsx
-│   │   └── SuccessMessage.jsx
-│   ├── context/             # React Context
-│   │   └── AppContext.jsx
-│   ├── hooks/               # Custom React hooks
-│   │   ├── useAgents.jsx
-│   │   ├── useFilters.jsx
-│   │   └── useLeads.jsx
-│   ├── pages/               # Page components
-│   │   ├── AddLead.jsx
-│   │   ├── AddSalesAgent.jsx
-│   │   ├── Dashboard.jsx
-│   │   ├── LeadDetails.jsx
-│   │   ├── LeadList.jsx
-│   │   ├── LeadStatusView.jsx
-│   │   ├── Reports.jsx
-│   │   ├── SalesAgentManagement.jsx
-│   │   └── SalesAgentView.jsx
-│   ├── services/            # API services
-│   │   └── api.js
-│   ├── styles/              # CSS files
-│   │   └── App.css
-│   ├── utils/               # Utility functions
-│   │   ├── constants.js
-│   │   ├── formatters.js
-│   │   └── validators.js
-│   ├── App.jsx              # Main app component
-│   └── main.jsx             # Entry point
-├── public/
-├── .gitignore
-├── index.html
-├── package.json
-├── README.md
-└── vite.config.js
+```json
+[
+  {
+    "_id": "123",
+    "name": "Acme Corp",
+    "status": "Qualified",
+    "priority": "High",
+    "salesAgent": "agent_id",
+    "timeToClose": 30
+  }
+]
 ```
 
-## Getting Started
+### **GET /api/leads/:id**
+<br>
+Get details for one lead
+<br>
+Sample Response:
+<br>
 
-### Prerequisites
-- Node.js (v16 or higher)
-- npm or yarn
-- MongoDB instance running
-- Backend API running at `https://anvaya-backend-nu.vercel.app/api`
+```json
+{
+  "_id": "123",
+  "name": "Acme Corp",
+  "source": "Website",
+  "status": "Qualified",
+  "priority": "High",
+  "salesAgent": { "_id": "agent_id", "name": "John Doe" },
+  "timeToClose": 30,
+  "tags": ["enterprise", "tech"],
+  "createdAt": "2024-01-15T10:00:00Z"
+}
+```
 
-### Installation
+### **POST /api/leads**
+<br>
+Create a new lead
+<br>
+Sample Response:
+<br>
 
+```json
+{
+  "_id": "124",
+  "name": "New Lead",
+  "status": "New",
+  "priority": "Medium"
+}
+```
 
+### **PUT /api/leads/:id**
+<br>
+Update an existing lead
+<br>
+Sample Response:
+<br>
 
-### API Endpoints Used:
-- `GET /leads` - Fetch all leads (with optional filters)
-- `GET /leads/:id` - Fetch single lead
-- `POST /leads` - Create new lead
-- `PUT /leads/:id` - Update lead
-- `DELETE /leads/:id` - Delete lead
-- `GET /agents` - Fetch all sales agents
-- `POST /agents` - Create new agent
-- `GET /leads/:id/comments` - Fetch lead comments
-- `POST /leads/:id/comments` - Add comment to lead
-- `GET /tags` - Fetch all tags
-- `POST /tags` - Create new tag
-- `GET /report/last-week` - Leads closed last week
-- `GET /report/pipeline` - Pipeline statistics
-- `GET /report/closed-by-agent` - Closed leads by agent
+```json
+{
+  "_id": "123",
+  "name": "Updated Lead",
+  "status": "Contacted"
+}
+```
 
-## Features in Detail
+### **DELETE /api/leads/:id**
+<br>
+Delete a lead
+<br>
+Sample Response:
+<br>
 
-### URL-Based Filtering
-Share filtered views with team members using URL parameters:
-- `/leads?status=New` - View all new leads
-- `/leads?salesAgent=<agentId>` - View leads by agent
-- `/leads?status=Qualified&priority=High` - Combine multiple filters
+```json
+{
+  "message": "Lead deleted successfully"
+}
+```
 
-### Lead Status Pipeline
-1. **New** 
-2. **Contacted** 
-3. **Qualified** 
-4. **Proposal Sent** 
-5. **Closed** 
+### **GET /api/agents**
+<br>
+List all sales agents
+<br>
+Sample Response:
+<br>
 
-### Priority Levels
-- **High** 
-- **Medium** 
-- **Low**
+```json
+[
+  {
+    "_id": "agent_1",
+    "name": "John Doe",
+    "email": "john@company.com"
+  }
+]
+```
 
-### Lead Sources
-Track where leads originate:
-- Website
-- Referral
-- Cold Call
-- Advertisement
-- Email
-- Other
+### **POST /api/agents**
+<br>
+Create a new sales agent
+<br>
+Sample Response:
+<br>
 
-## Acknowledgments
-- Built with React and Vite
-- Charts powered by Chart.js
-- Icons from emoji set
+```json
+{
+  "_id": "agent_2",
+  "name": "Jane Smith",
+  "email": "jane@company.com"
+}
+```
+
+### **GET /api/leads/:id/comments**
+<br>
+Get comments for a lead
+<br>
+Sample Response:
+<br>
+
+```json
+[
+  {
+    "_id": "comment_1",
+    "commentText": "Follow up scheduled",
+    "author": "John Doe",
+    "createdAt": "2024-01-15T10:00:00Z"
+  }
+]
+```
+
+### **POST /api/leads/:id/comments**
+<br>
+Add a comment to a lead
+<br>
+Sample Response:
+<br>
+
+```json
+{
+  "_id": "comment_2",
+  "commentText": "Meeting completed",
+  "author": "John Doe",
+  "createdAt": "2024-01-16T14:30:00Z"
+}
+```
+
+### **GET /api/report/closed-by-agent**
+<br>
+Get closed leads count by agent
+<br>
+Sample Response:
+<br>
+
+```json
+[
+  {
+    "agentName": "John Doe",
+    "closedCount": 15
+  }
+]
+```
+
+## Contact
+
+For bugs or feature requests, please reach out to rishaabh105@gmail.com
